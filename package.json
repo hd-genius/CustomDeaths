@@ -1,0 +1,25 @@
+{
+  "name": "custom-deaths",
+  "version": "1.0.0",
+  "description": "RPG Maker MV plugin to allow adding custom behavior around deaths",
+  "main": "src/CustomDeaths.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hd-genius/CustomDeaths.git"
+  },
+  "author": "Roy Stewart",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hd-genius/CustomDeaths/issues"
+  },
+  "homepage": "https://github.com/hd-genius/CustomDeaths#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
