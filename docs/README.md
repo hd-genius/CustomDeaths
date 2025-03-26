@@ -45,4 +45,7 @@ The value set in the variable can be interpreted as follows:
 This command returns the flow of control from the common event back to the regular flow of battle. It is used at the end of the [before death](#before-death-event) and [after death](#after-death-event) events.
 
 ## Planned features
-- Opt out individual Actors/Enemies from the events so that you do not need to have as many edge cases and checks in scripts
+
+These features are planned to be added in the future but are not currently implemented and do not have an expected time frame to be added. Pull requests adding these features are more than welcome.
+
+- Allow events to target/exclude undesired actors and enemies
