@@ -4,9 +4,9 @@
 
 /*:
  * @target MV
- * @plugindesc extra events and customizations to allow deaths to be handled
- * with more control
+ * @plugindesc extra events and customizations to allow deaths to be handled with more control
  * @author Roy Stewart
+ * @url https://github.com/hd-genius/CustomDeaths
  * 
  * @help TODO
  * 
@@ -90,6 +90,7 @@
     };
 
     PluginManager.registerCommand(pluginName, "continue death", args => {
+        // null safe in case the user uses the command at an inappropriate time
         lastKilledBattler?.continueDeath();
     });
 
