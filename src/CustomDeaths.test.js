@@ -4,7 +4,8 @@ require("./__mocks__/$gameTemp.js")
 require("./__mocks__/$gameVariables.js")
 
 /**
- * remove and reimport the plugin and the code that it alters so that the plugin can accept changes in the passed parameters
+ * Remove and reimport the plugin and the code that it alters so that the plugin can accept changes in the passed parameters.
+ * Acts similar to the plugin manager when it loads the plugin in RPG Maker.
  */
 function setupPlugin() {
     jest.resetModules();
@@ -51,26 +52,46 @@ function testKilledEnemyTypeVariableSet() {
     expect($gameVariables.setValue).toBeCalledWith(killedEntityType, 2);
 }
 
-function testNoDamageUntilBeforeDeathEventReturns() {
-    fail('cannot test this behavior yet')
+function testNoDamageBeforeBeforeDeathEventReturns() {
+    const realSetHp = jest.fn();
+    const battler = new Game_Battler(realSetHp);
+    battler.setHp(0);
+    expect(realSetHp).not.toBeCalled();
 }
 
 function testDamageAfterBeforeDeathEventReturns() {
-    fail('cannot test this behavior yet')
+    const realSetHp = jest.fn();
+    const battler = new Game_Battler(realSetHp);
+    battler.setHp(0);
+    simulateBeforeDeathEvent();
+    expect(realSetHp).toBeCalledWith(0);
 }
 
 describe('CustomDeaths plugin', () => {
+    let continueDeath = null;
+
+    beforeEach(() => {
+        PluginManager.registerCommand.mockImplementation((name, command, func) => {
+            if (name == "CustomDeaths" && command == "continue death") {
+                continueDeath = func;
+            }
+        });
+    });
+    
     afterEach(() => {
-        jest.clearAllMocks()
+        jest.clearAllMocks();
     });
 
     describe('"continue death" command', () => {
-        it.todo('should be registered with the PluginManager');
+        it('should be registered with the PluginManager', () => {
+            setupPlugin();
+            expect(PluginManager.registerCommand).toBeCalledWith("CustomDeaths", "continue death", expect.anything())
+        });
     })
 
     describe('when a Game_Battler takes damage', () => {
         describe('when a beforeDeathEvent is provided', () => {
-            beforeEach(() => {
+            beforeAll(() => {
                 PluginManager.parameters.mockReturnValue({
                     afterDeathEvent: null,
                     beforeDeathEvent,
@@ -93,13 +114,13 @@ describe('CustomDeaths plugin', () => {
 
             it.todo('should not let combat continue until control is returned from the beforeDeathEvent');
 
-            it.skip('should not apply the lethal damage before control has been returned by the beforeDeathEvent', testNoDamageUntilBeforeDeathEventReturns);
+            it('should not apply the lethal damage before control has been returned by the beforeDeathEvent', testNoDamageBeforeBeforeDeathEventReturns);
 
             it.skip('should apply the lethal damage after control has been returned by the beforeDeathEvent', testDamageAfterBeforeDeathEventReturns);
         });
 
         describe('when an afterDeathEvent is provided', () => {
-            beforeEach(() => {
+            beforeAll(() => {
                 PluginManager.parameters.mockReturnValue({
                     afterDeathEvent,
                     beforeDeathEvent: null,
@@ -131,7 +152,7 @@ describe('CustomDeaths plugin', () => {
         });
 
         describe('when a beforeDeathEvent and an afterDeathEvent are provided', () => {
-            beforeEach(() => {
+            beforeAll(() => {
                 PluginManager.parameters.mockReturnValue({
                     afterDeathEvent,
                     beforeDeathEvent,
@@ -146,9 +167,16 @@ describe('CustomDeaths plugin', () => {
 
             it('should fire the beforeDeathEvent', testBeforeDeathEventIsFired);
 
-            it.skip('should not apply the lethal damage before control has been returned by the beforeDeathEvent', testNoDamageUntilBeforeDeathEventReturns);
+            it('should not apply the lethal damage before control has been returned by the beforeDeathEvent', testNoDamageBeforeBeforeDeathEventReturns);
 
-            it.todo('should apply damage before the afterDeathEvent is fired');
+            // check the order the functions are called
+            it.skip('should apply damage before the afterDeathEvent is fired', () => {
+                const realSetHp = jest.fn();
+                const battler = new Game_Battler(realSetHp);
+                battler.setHp(0);
+                continueDeath();
+                expect(realSetHp).toBeCalledWith(0);
+            });
             
             it('should set the value of the killedEntityType variable for enemies', testKilledEnemyTypeVariableSet);
 

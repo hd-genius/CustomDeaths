@@ -43,55 +43,54 @@
 
     const typeOfBattler = battler => battler.isActor() ? 1 : 2;
 
-    // Overwrite the health management functions to implement checks and custom event calls
-    const originalSetHp = Game_Battler.prototype.setHp;
-
-    let afterDeathHealth = 0;
-
     const runCommonEvent = event => {
         $gameTemp.reserveCommonEvent(event);
         console.log(`reserved common event ${event}`)
-    }
-
-    const continueDeath = battler => {
-        originalSetHp.call(battler, afterDeathHealth);
-        if (afterDeathEvent) {
-            runCommonEvent(afterDeathEvent);
-        }
     };
 
-    const logKilledBattler = () => {
-        console.log('index killed: %d', $gameVariables.value(killedIdVariable));
-        console.log(`entity killed is an ${$gameVariables.value(killedEntityType) == 1 ? 'Actor' : 'Enemy'}`)
-    }
+    let lastKilledBattler = null;
+
+    // Overwrite the health management functions to implement checks and custom event calls
+    const originalSetHp = Game_Battler.prototype.setHp;
 
     Game_Battler.prototype.setHp = function (newHp) {
         // if battler would die trigger events
         if (newHp <= 0) {
-            afterDeathHealth = newHp;
+            this.pendingNewHp = newHp;
 
             $gameVariables.setValue(killedIdVariable, this.index());
             $gameVariables.setValue(killedEntityType, typeOfBattler(this));
 
-            logKilledBattler();
+            console.log('index killed: %d', $gameVariables.value(killedIdVariable));
+            console.log(`entity killed is an ${$gameVariables.value(killedEntityType) == 1 ? 'Actor' : 'Enemy'}`)
 
             if (beforeDeathEvent) {
                 runCommonEvent(beforeDeathEvent);
+
+                lastKilledBattler = this;
 
                 // Prevent the last battler from dying before the custom event can be run
                 // setTimeout(() => {
                 //     originalSetHp.call(this, 0);
                 // }, 1000)
             } else {
-                continueDeath(this);
+                this.continueDeath();
             }
         } else {
             originalSetHp.call(this, newHp);
         }
     };
 
+    Game_Battler.prototype.continueDeath = function () {
+        originalSetHp.call(this, this.pendingNewHp);
+        if (afterDeathEvent) {
+            runCommonEvent(afterDeathEvent);
+        }
+        lastKilledBattler = null;
+    };
+
     PluginManager.registerCommand(pluginName, "continue death", args => {
-        continueDeath(null);
+        lastKilledBattler?.continueDeath();
     });
 
     // // Overwrite the health management functions to implement checks and custom event calls
