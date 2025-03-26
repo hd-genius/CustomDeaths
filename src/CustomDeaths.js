@@ -14,22 +14,22 @@
  * 
  * @command continueDeath
  * @text Continue death
- * @desc Resume death as it would have happened before the flow was interrupted
+ * @desc Called while handling death events to resume death as it would have happened before the flow was interrupted.
  * 
  * @param beforeDeathEvent
  * @text Before death event
  * @type common_event
- * @desc The common event that is fired right before a battler would take lethal damage
+ * @desc The common event that is fired before a battler would take lethal damage. At this point the battler has not yet died.
  * 
  * @param afterDeathEvent
  * @text After death event
  * @type common_event
- * @desc The common event that is fired right after a battler takes lethal damage
+ * @desc The common event that is fired after a battler takes lethal damage. At this point the battler has already died.
  * 
  * @param killedIdVariable
  * @text Killed entity id variable
  * @type variable
- * @desc The variable to store the killed entity's index number in when events are fired
+ * @desc The variable to store the killed entity's index number in when events are fired.
  * 
  * @param killedEntityType
  * @text Killed entity type
