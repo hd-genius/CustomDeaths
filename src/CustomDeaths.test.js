@@ -110,6 +110,12 @@ describe('CustomDeaths plugin', () => {
                 battler.setHp(0);
                 expect(realSetHp).toBeCalledWith(0);
             });
+
+            it('should not call any events', () => {
+                const battler = new Game_Battler();
+                battler.setHp(0);
+                expect($gameTemp.reserveCommonEvent).not.toBeCalled();
+            });
         })
 
         describe('when a beforeDeathEvent is provided', () => {
