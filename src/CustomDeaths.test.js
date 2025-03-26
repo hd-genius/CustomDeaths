@@ -77,7 +77,7 @@ describe('CustomDeaths plugin', () => {
             }
         });
     });
-    
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -90,6 +90,28 @@ describe('CustomDeaths plugin', () => {
     })
 
     describe('when a Game_Battler takes damage', () => {
+        describe('when no events are provided', () => {
+            beforeAll(() => {
+                PluginManager.parameters.mockReturnValue({
+                    afterDeathEvent: null,
+                    beforeDeathEvent: null,
+                    killedIdVariable,
+                    killedEntityType
+                });
+
+                setupPlugin();
+            });
+
+            it('nonlethal damage should be applied normally', testNonLethalDamage);
+
+            it('lethal damage should be applied normally', () => {
+                const realSetHp = jest.fn();
+                const battler = new Game_Battler(realSetHp);
+                battler.setHp(0);
+                expect(realSetHp).toBeCalledWith(0);
+            });
+        })
+
         describe('when a beforeDeathEvent is provided', () => {
             beforeAll(() => {
                 PluginManager.parameters.mockReturnValue({
@@ -140,7 +162,7 @@ describe('CustomDeaths plugin', () => {
                 const battler = new Game_Battler();
                 battler.setHp(0);
                 expect($gameTemp.reserveCommonEvent).toBeCalledWith(afterDeathEvent);
-            })
+            });
 
             it('should set the value of the killedEntityType variable for enemies', testKilledEnemyTypeVariableSet);
 
@@ -177,7 +199,7 @@ describe('CustomDeaths plugin', () => {
                 continueDeath();
                 expect(realSetHp).toBeCalledWith(0);
             });
-            
+
             it('should set the value of the killedEntityType variable for enemies', testKilledEnemyTypeVariableSet);
 
             it('should set the value of the killedEntityType variable for actors', testKilledActorTypeVariableSet);
