@@ -102,9 +102,9 @@ describe('CustomDeaths plugin', () => {
                 setupPlugin();
             });
 
-            it('nonlethal damage should be applied normally', testNonLethalDamage);
+            it('should apply nonlethal damage normally', testNonLethalDamage);
 
-            it('lethal damage should be applied normally', () => {
+            it('should apply lethal damage normally', () => {
                 const realSetHp = jest.fn();
                 const battler = new Game_Battler(realSetHp);
                 battler.setHp(0);
@@ -130,7 +130,7 @@ describe('CustomDeaths plugin', () => {
                 setupPlugin();
             });
 
-            it('nonlethal damage should be applied normally', testNonLethalDamage);
+            it('should apply nonlethal damage normally', testNonLethalDamage);
 
             it('should fire the beforeDeathEvent', testBeforeDeathEventIsFired);
 
@@ -160,7 +160,7 @@ describe('CustomDeaths plugin', () => {
             });
 
 
-            it('nonlethal damage should be applied normally', testNonLethalDamage);
+            it('should apply nonlethal damage normally', testNonLethalDamage);
 
             it.todo('should apply damage before the afterDeathEvent is fired');
 
@@ -191,7 +191,7 @@ describe('CustomDeaths plugin', () => {
                 setupPlugin();
             });
 
-            it('nonlethal damage should be applied normally', testNonLethalDamage);
+            it('should apply nonlethal damage normally', testNonLethalDamage);
 
             it('should fire the beforeDeathEvent', testBeforeDeathEventIsFired);
 
